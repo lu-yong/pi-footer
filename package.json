@@ -14,12 +14,13 @@
   ],
   "pi": {
     "extensions": [
-      "./src/index.ts"
+      "./dist/index.ts"
     ],
     "video": "https://raw.githubusercontent.com/wobondar/pi-footer/main/assets/demo-video.mp4",
     "image": "https://raw.githubusercontent.com/wobondar/pi-footer/main/assets/demo-teaser.gif"
   },
   "files": [
+    "dist/",
     "src/",
     "README.md",
     "CHANGELOG.md",
@@ -45,9 +46,11 @@
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check",
     "typecheck": "tsc --noEmit",
+    "build": "node scripts/build.mjs",
+    "build:check": "node scripts/build.mjs --check",
     "test": "vitest run",
     "coverage": "vitest run --coverage",
-    "prepublishOnly": "npm run typecheck && npm run fmt:check && npm run lint && npm run test"
+    "prepublishOnly": "npm run build && npm run typecheck && npm run fmt:check && npm run lint && npm run test"
   },
   "peerDependencies": {
     "@earendil-works/pi-coding-agent": "*",
@@ -56,13 +59,12 @@
   "devDependencies": {
     "@types/node": "^26.0.0",
     "@vitest/coverage-v8": "^4.1.5",
+    "chalk": "^6.0.0",
+    "esbuild": "^0.28.2",
     "oxfmt": "^0.73.0",
     "oxlint": "^1.62.0",
     "oxlint-tsgolint": "^7.0.2001",
     "typescript": "^7.0.2",
     "vitest": "^4.1.5"
-  },
-  "dependencies": {
-    "chalk": "^6.0.0"
   }
 }

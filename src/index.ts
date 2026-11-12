@@ -23,12 +23,23 @@ import { EMPTY_GIT_INFO, getGitInfo, hasEnabledGitWidgets, loadGitInfo } from ".
 import { collectSessionMetrics, collectTurnMetrics } from "./metrics.js";
 import { renderStatuslines } from "./render.js";
 import { isRecord, type GitInfo, type StatuslineConfig, type StatuslineData } from "./types.js";
-import { openStatuslineConfigUi } from "./ui.js";
+import type * as ConfigUi from "./ui.js";
 import { WidgetStore } from "./widgets/store.js";
 
 // Structural mirror of pi's footerData — collectStatuslineData only needs the branch getter.
 interface FooterDataLike {
   getGitBranch(): string | null;
+}
+
+// The config UI is ~40% of the extension and only `/footer` needs it, so it stays out of
+// the startup module graph and loads on first use. A failed load is not cached.
+let configUiModule: Promise<typeof ConfigUi> | undefined;
+async function loadConfigUi(): Promise<typeof ConfigUi> {
+  configUiModule ??= import("./ui.js").catch((error: unknown) => {
+    configUiModule = undefined;
+    throw error;
+  });
+  return configUiModule;
 }
 
 export default async function statuslineExtension(pi: ExtensionAPI): Promise<void> {
@@ -139,6 +150,7 @@ export default async function statuslineExtension(pi: ExtensionAPI): Promise<voi
           textVerbosity: liveTextVerbosity,
         },
       );
+      const { openStatuslineConfigUi } = await loadConfigUi();
       const result = await openStatuslineConfigUi(
         ctx,
         config,

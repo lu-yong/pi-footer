@@ -42,8 +42,10 @@ Local development checkout:
 
 ```bash
 npm install
-pi -e ./src/index.ts
+pi -e ./src/index.ts   # loads the sources directly, no build needed
 ```
+
+`pi install` loads the prebuilt bundle in `dist/`, which keeps startup fast: pi reads three files instead of resolving ~115 source modules on every launch, and the config UI is only loaded when you run `/footer`.
 
 ## Quick start
 
@@ -342,7 +344,10 @@ npm run lint
 npm run fmt
 npm run typecheck
 npm run test
+npm run build
 ```
+
+`dist/` is generated from `src/` by `npm run build` and is committed, because pi installs git packages without dev dependencies and cannot build them. Rebuild and commit `dist/` whenever `src/` changes; CI fails through `npm run build:check` when it is stale.
 
 ## Credits
 
